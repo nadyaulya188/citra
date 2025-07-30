@@ -20,7 +20,7 @@ st.markdown(
     """
     <style>
     .stApp {
-        background-image: url("f80e7f0708453941a75de95d05dc0d543f4729fe");
+        background-image: url("https://pin.it/4ZDayCAR9");
         background-size: cover;
         background-position: center;
     }
