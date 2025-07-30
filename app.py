@@ -1,56 +1,52 @@
 import streamlit as st
+import base64
 
-# Fungsi untuk menghitung normalitas
-def hitung_normalitas(gram_zat, berat_ekuivalen, volume_larutan):
-    try:
-        normalitas = (gram_zat / berat_ekuivalen) / (volume_larutan / 1000)
-        return normalitas
-    except ZeroDivisionError:
+# ===== Fungsi menghitung normalitas =====
+def hitung_normalitas(massa, berat_ekivalen, volume_ml):
+    if berat_ekivalen <= 0 or volume_ml <= 0:
         return None
+    return (massa / berat_ekivalen) / (volume_ml / 1000)
 
-# Mengatur halaman
-st.set_page_config(
-    page_title="Kalkulator Normalitas",
-    page_icon="🧪",
-    layout="centered"
-)
+# ===== Tambahkan background dari file atau URL =====
+def set_background(image_file):
+    with open(image_file, "rb") as img_file:
+        img_bytes = img_file.read()
+    encoded = base64.b64encode(img_bytes).decode()
+    st.markdown(
+        f"""
+        <style>
+        .stApp {{
+            background-image: url("data:image/png;base64,{encoded}");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
 
-# Tambahkan CSS untuk background image
-st.markdown(
-    """
-    <style>
-    .stApp {
-        background-image: ("https://pin.it/4ZDayCAR9");
-        background-size: cover;
-        background-position: center;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+# ===== Program utama =====
+def main():
+    set_background("bg.jpg")  # Ganti dengan nama file gambar latar kamu
 
-# Judul aplikasi
-st.title("🧪 Kalkulator Normalitas Larutan")
+    st.title("🔬 Kalkulator Normalitas Larutan")
 
-st.markdown("Hitung normalitas larutan dengan memasukkan massa zat, berat ekuivalen, dan volume larutan.")
+    st.markdown("Masukkan data untuk menghitung normalitas (N):")
 
-# Input pengguna
-gram_zat = st.number_input("Massa zat (gram)", min_value=0.0, format="%.4f")
-berat_ekuivalen = st.number_input("Berat ekuivalen (g/eq)", min_value=0.0001, format="%.4f")
-volume_larutan = st.number_input("Volume larutan (mL)", min_value=0.0001, format="%.2f")
+    massa = st.number_input("Massa zat (gram)", min_value=0.0, format="%.4f")
+    berat_ekivalen = st.number_input("Berat ekivalen (g/ek)", min_value=0.0, format="%.4f")
+    volume = st.number_input("Volume larutan (mL)", min_value=0.0, format="%.2f")
 
-# Tombol hitung
-if st.button("Hitung Normalitas"):
-    normalitas = hitung_normalitas(gram_zat, berat_ekuivalen, volume_larutan)
-    if normalitas is not None:
-        st.success(f"Normalitas larutan adalah **{normalitas:.4f} N**")
-    else:
-        st.error("Kesalahan: Pembagian dengan nol!")
+    if st.button("Hitung Normalitas"):
+        normalitas = hitung_normalitas(massa, berat_ekivalen, volume)
+        if normalitas is not None:
+            st.success(f"✅ Normalitas larutan: {normalitas:.4f} N")
+        else:
+            st.error("❌ Berat ekivalen dan volume harus lebih dari 0.")
 
-# Catatan tambahan
-st.markdown("""
-**Catatan**:
-- Berat ekuivalen tergantung pada jenis reaksi dan zat (misalnya H₂SO₄ = 49 untuk 2H⁺).
-- Volume harus dalam mililiter (mL).
-""")
+    st.markdown("---")
+    st.info("Created with ❤️ using Streamlit by [Nama Kamu]")
 
+if __name__ == "__main__":
+    main()
